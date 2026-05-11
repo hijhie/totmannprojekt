@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Totmannschalter</title>
+</head>
+<body>
+
+    <h1>Totmannschalter</h1>
+
+    <h2 id="timer">Scharf</h2>
+
+    <a href="/start">
+        <button>Start</button>
+    </a>
+
+    <a href="/reset">
+        <button>Reset</button>
+    </a>
+
+    <script>
+        async function updateTimer() {
+
+            const response = await fetch('/time');
+            const data = await response.json();
+
+            if (typeof data.seconds === "string") {
+                document.getElementById("timer").innerText = data.seconds;
+            } else {
+                document.getElementById("timer").innerText =
+                    data.seconds + " Sekunden übrig";
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+
+        updateTimer();
+    </script>
+
+</body>
+</html>
