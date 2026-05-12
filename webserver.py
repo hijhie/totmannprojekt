@@ -1,7 +1,5 @@
 from flask import Flask, render_template, redirect, jsonify
-import threading
 import time
-import os
 
 app = Flask(__name__)
 
@@ -9,21 +7,7 @@ timer_seconds = 10
 last_reset = time.time()
 
 timer_active = False
-
-def timer_loop():
-    global last_reset
-    global timer_active
-
-    while True:
-        time.sleep(1)
-
-        if timer_active:
-
-            if time.time() - last_reset > timer_seconds:
-                os.system("rundll32.exe user32.dll,LockWorkStation")
-                timer_active = False
-
-threading.Thread(target=timer_loop, daemon=True).start()
+armed = False
 
 @app.route("/")
 def home():
@@ -33,35 +17,45 @@ def home():
 def start():
     global last_reset
     global timer_active
+    global armed
 
     last_reset = time.time()
     timer_active = True
+    armed = False
 
     return redirect("/")
 
 @app.route("/reset")
 def reset():
     global last_reset
+    global armed
 
-    if timer_active:
-        last_reset = time.time()
+    last_reset = time.time()
+    armed = False
 
     return redirect("/")
 
 @app.route("/time")
 def get_time():
 
+    global armed
+
     if not timer_active:
-        return jsonify({"seconds": "Scharf"})
+        return jsonify({
+            "seconds": "Nicht gestartet",
+            "armed": False
+        })
 
     remaining = int(timer_seconds - (time.time() - last_reset))
 
-    if remaining < 0:
+    if remaining <= 0:
+        armed = True
         remaining = 0
 
-    return jsonify({"seconds": remaining})
+    return jsonify({
+        "seconds": remaining,
+        "armed": armed
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
-print("deaktivirt")
