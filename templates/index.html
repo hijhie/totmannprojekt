@@ -2,12 +2,56 @@
 <html>
 <head>
     <title>Totmannschalter</title>
+
+    <style>
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 50px;
+        }
+
+        h2 {
+            font-size: 40px;
+            margin-bottom: 40px;
+        }
+
+        button {
+
+            background-color: hotpink;
+            color: white;
+
+            border: none;
+
+            padding: 20px 40px;
+
+            font-size: 30px;
+
+            border-radius: 15px;
+
+            margin: 10px;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+
 </head>
 <body>
 
     <h1>Totmannschalter</h1>
 
-    <h2 id="timer">Scharf</h2>
+    <h2 id="timer">Nicht gestartet</h2>
 
     <a href="/start">
         <button>Start</button>
@@ -18,22 +62,36 @@
     </a>
 
     <script>
+
         async function updateTimer() {
 
             const response = await fetch('/time');
             const data = await response.json();
 
-            if (typeof data.seconds === "string") {
-                document.getElementById("timer").innerText = data.seconds;
-            } else {
+            if (data.armed === true) {
+
                 document.getElementById("timer").innerText =
-                    data.seconds + " Sekunden übrig";
+                    "SCHARF";
+
+            } else {
+
+                if (typeof data.seconds === "string") {
+
+                    document.getElementById("timer").innerText =
+                        data.seconds;
+
+                } else {
+
+                    document.getElementById("timer").innerText =
+                        data.seconds + " Sekunden";
+                }
             }
         }
 
         setInterval(updateTimer, 1000);
 
         updateTimer();
+
     </script>
 
 </body>
