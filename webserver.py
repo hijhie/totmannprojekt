@@ -3,7 +3,7 @@ import time
 
 app = Flask(__name__)
 
-timer_seconds = 10
+timer_seconds = 6600
 last_reset = time.time()
 
 timer_active = False
